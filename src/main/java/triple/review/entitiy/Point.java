@@ -15,7 +15,7 @@ public class Point {
     @Column(name = "seq")
     private int seq;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reviewId")
     private Review review;
 
@@ -23,10 +23,28 @@ public class Point {
 
     @Column(name = "point_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status pointStatus;
+    private PointStatus pointStatus;
 
-    private int pint;
+    private int point;
+    private String reason;
     @Column(name = "reg_date", nullable = false)
     private LocalDateTime regDate;
+
+    public static Point createPoint(Review review, String userUUID, PointStatus pointStatus,
+                                    int point, String reason) {
+        Point createPoint = new Point();
+        createPoint.changePoint(review, userUUID, pointStatus, point, reason);
+        return createPoint;
+    }
+
+    public void changePoint(Review review, String userUUID, PointStatus pointStatus,
+                            int point, String reason) {
+        this.review = review;
+        this.userUUID = userUUID;
+        this.pointStatus = pointStatus;
+        this.point = point;
+        this.reason = reason;
+        this.regDate = LocalDateTime.now();
+    }
 
 }

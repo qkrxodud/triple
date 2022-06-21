@@ -10,25 +10,33 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SequenceGenerator(
-        name="ATTACHMENT_SEQ_GENERATOR",
-        sequenceName = "ATTACHMENT_SEQ"
-)
 public class Attachment {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue
     @Column(name = "seq")
     private int seq;
 
     private String fileUUID;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reviewId")
     private Review review;
 
-    //TODO BaseEntitiy로 할지 고민..
     @Column(name = "reg_date")
     private LocalDateTime regDate;
     @Column(name = "modify_date")
     private LocalDateTime modifyDate;
+
+    public static Attachment createAttachment(String fileUUID, Review review) {
+        Attachment attachment = new Attachment();
+        attachment.changeAttachment(fileUUID, review);
+        return attachment;
+    }
+
+    public void changeAttachment(String fileUUID, Review review) {
+        this.fileUUID = fileUUID;
+        this.review = review;
+        this.regDate = LocalDateTime.now();
+        this.modifyDate = LocalDateTime.now();
+    }
 }
