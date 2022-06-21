@@ -14,7 +14,7 @@ spring:
       hibernate:
         show_sql: true
         # format_sql: true
-        user_sql: true
+        #user_sql: true
     # defer-datasource-initialization: true
   mvc:
     pathmatch:
