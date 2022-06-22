@@ -12,10 +12,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Attachment {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "seq")
     private int seq;
 
+    @Column(name = "file_uuid")
     private String fileUUID;
 
     @ManyToOne(fetch = FetchType.LAZY)

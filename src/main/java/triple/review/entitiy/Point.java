@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Point {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "seq")
     private int seq;
 
@@ -19,6 +19,7 @@ public class Point {
     @JoinColumn(name = "reviewId")
     private Review review;
 
+    @Column(name = "user_uuid")
     private String userUUID;
 
     @Column(name = "point_status", nullable = false)

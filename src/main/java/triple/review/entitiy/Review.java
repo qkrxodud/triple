@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review {
 
-    @Id @GeneratedValue
+    @Id  @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "seq")
     private Long reviewId;
 
