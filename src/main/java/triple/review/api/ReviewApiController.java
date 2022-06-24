@@ -7,9 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import triple.review.dto.AttachmentDto;
 import triple.review.dto.ReviewDto;
-import triple.review.entitiy.Attachment;
 import triple.review.entitiy.Review;
 import triple.review.entitiy.ReviewStatus;
 import triple.review.service.AttachmentService;
@@ -18,10 +16,6 @@ import triple.review.utils.ResponseMessage;
 
 import javax.validation.Valid;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static triple.review.entitiy.Attachment.*;
 import static triple.review.entitiy.Review.*;
 import static triple.review.utils.DefaultRes.createDefaultRes;
 
@@ -32,26 +26,61 @@ public class ReviewApiController {
     private final ReviewService reviewService;
     private final AttachmentService attachmentService;
 
-    @PostMapping("/api/save-review")
-    public ResponseEntity saveReview(@RequestBody @Valid CreateReviewRequest request) {
-        // 리뷰 등록
-        Review review = createReview(request.getReviewId(), request.getUserId(), request.getPlaceId(), request.getContent());
-        Review saveReview = reviewService.save(review);
 
-        // 파일등록
-        String[] attachedPhotoIds = request.getAttachedPhotoIds();
-        List<AttachmentDto> AttachmentDtos = new ArrayList<>();
-        for (String fileUUID : attachedPhotoIds) {
-            Attachment attachment = createAttachment(fileUUID, review);
-            Attachment save = attachmentService.save(attachment);
+    @PostMapping("/api/exec-review")
+    public ResponseEntity execReview(@RequestBody @Valid CreateReviewRequest request) {
+        ReviewDto reviewDto = null;
+        switch (request.getAction()) {
+            case ADD :
+                reviewDto = saveReview(request);
+                break;
+            case MOD :
+                modifyReview(request);
+                break;
+            case DELETE:
+                reviewDto = deleteReview(request);
+                break;
 
-            AttachmentDto attachmentDto = new AttachmentDto(save.getFileUUID());
-            AttachmentDtos.add(attachmentDto);
         }
-
-        ReviewDto reviewDto = new ReviewDto(saveReview.getReviewUUID(), saveReview.getContent(), AttachmentDtos);
         return new ResponseEntity<>(createDefaultRes(ResponseMessage.OK,
                 "SUCCESS", reviewDto), HttpStatus.OK);
+    }
+
+    // 리뷰등록
+    public ReviewDto saveReview(CreateReviewRequest request) {
+        Review review = createReview(request.getReviewId(), request.getUserId(), request.getPlaceId(),
+                request.getContent(), ReviewStatus.ADD);
+        Long saveReviewId = reviewService.save(review);
+        Review findReview = reviewService.findByReviewId(saveReviewId);
+
+        // 첨부파일 등록
+        attachmentService.saves(findReview, request.getAttachedPhotoIds());
+
+        return new ReviewDto(findReview.getReviewUUID(), findReview.getContent(), AttachmentDtos, findReview.getReviewStatus());
+    }
+
+    // 리뷰 삭제
+    public ReviewDto deleteReview(CreateReviewRequest request) {
+        Long reviewId = reviewService.changeReviewStatus(request.getReviewId(), request.getUserId(),
+                request.getPlaceId(), request.getAction(), request.getContent());
+        Review findReview = reviewService.findByReviewId(reviewId);
+
+        //첨부 파일 삭제
+        attachmentService.deleteAttachment(findReview);
+
+        return new ReviewDto(findReview.getReviewUUID(), findReview.getContent(), findReview.getReviewStatus());
+    }
+
+    // 리뷰 수정
+    public Long modifyReview(CreateReviewRequest request) {
+        Long reviewId = reviewService.changeReviewStatus(request.getReviewId(), request.getUserId(),
+                request.getPlaceId(), request.getAction(), request.getContent());
+        Review findReview = reviewService.findByReviewId(reviewId);
+
+        // 첨부 파일 변경
+        attachmentService.changeAttachment(findReview, request.getAttachedPhotoIds());
+        // TODO dto로 만들어 주자
+        return null;
     }
 
     @Data
