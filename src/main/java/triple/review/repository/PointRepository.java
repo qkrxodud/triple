@@ -3,10 +3,13 @@ package triple.review.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import triple.review.entitiy.Point;
+import triple.review.entitiy.PointStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PointRepository  extends JpaRepository<Point, Integer> {
+    List<Optional<Point>> findPointByReview_ReviewIdAndPointStatus(Long reviewId, PointStatus pointStatus);
 
     @Query(value =
             "SELECT user_uuid, pls_point, min_point, pls_point - min_point AS total_point " +
