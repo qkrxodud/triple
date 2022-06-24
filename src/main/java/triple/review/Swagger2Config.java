@@ -28,7 +28,7 @@ public class Swagger2Config {
                 .title("트리플 리뷰 포인트 조회 서비스")
                 .description("회원의 리뷰에 따른 포인트 부여")
                 .version("1.0.0")
-                .termsOfServiceUrl("https://https://cozing.oopy.io/")
+                .termsOfServiceUrl("http://cozing.oopy.io/")
                 .license("LICENSE")
                 .licenseUrl("")
                 .build();
