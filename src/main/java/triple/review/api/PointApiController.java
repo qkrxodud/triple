@@ -33,16 +33,13 @@ public class PointApiController {
     public ResponseEntity findAllPoint() {
         List<Object[]> findUserPoint = pointService.findAllPoint();
         return getResponseEntity(findUserPoint);
-
     }
 
     //응답 데이터
     private ResponseEntity getResponseEntity(List<Object[]> findUserPoint) {
         List<PointDto> findPointDtos = findUserPoint.stream().map(
                 o -> new PointDto(o[0].toString()
-                        , Integer.parseInt(o[1].toString())
-                        , Integer.parseInt(o[2].toString())
-                        ,Integer.parseInt(o[1].toString())-Integer.parseInt(o[2].toString())))
+                        ,Integer.parseInt(o[1].toString())))
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(createDefaultRes(ResponseMessage.OK, "SUCCESS", findPointDtos), HttpStatus.OK);

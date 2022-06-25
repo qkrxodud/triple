@@ -26,28 +26,9 @@ public class ReviewApiController {
     private final ReviewService reviewService;
     private final AttachmentService attachmentService;
 
-
-    @PostMapping("/api/exec-review")
-    public ResponseEntity execReview(@RequestBody @Valid CreateReviewRequest request) {
-        ReviewDto reviewDto = null;
-        switch (request.getAction()) {
-            case ADD :
-                reviewDto = saveReview(request);
-                break;
-            case MOD :
-                modifyReview(request);
-                break;
-            case DELETE:
-                reviewDto = deleteReview(request);
-                break;
-
-        }
-        return new ResponseEntity<>(createDefaultRes(ResponseMessage.OK,
-                "SUCCESS", reviewDto), HttpStatus.OK);
-    }
-
     // 리뷰등록
-    public ReviewDto saveReview(CreateReviewRequest request) {
+    @PostMapping("/api/save-review")
+    public ResponseEntity saveReview(@RequestBody @Valid CreateReviewRequest request) {
         Review review = createReview(request.getReviewId(), request.getUserId(), request.getPlaceId(),
                 request.getContent(), ReviewStatus.ADD);
         Long saveReviewId = reviewService.save(review);
@@ -56,31 +37,38 @@ public class ReviewApiController {
         // 첨부파일 등록
         attachmentService.saves(findReview, request.getAttachedPhotoIds());
 
-        return new ReviewDto(findReview.getReviewUUID(), findReview.getContent(), AttachmentDtos, findReview.getReviewStatus());
+        ReviewDto reviewDto = new ReviewDto(findReview.getReviewUUID(), findReview.getContent(), findReview.getReviewStatus());
+        return new ResponseEntity<>(createDefaultRes(ResponseMessage.OK,
+                "SUCCESS", reviewDto), HttpStatus.OK);
     }
 
     // 리뷰 삭제
-    public ReviewDto deleteReview(CreateReviewRequest request) {
-        Long reviewId = reviewService.changeReviewStatus(request.getReviewId(), request.getUserId(),
-                request.getPlaceId(), request.getAction(), request.getContent());
+    @PostMapping("/api/delete-review")
+    public ResponseEntity deleteReview(@RequestBody @Valid CreateDeleteReviewRequest request) {
+        Long reviewId = reviewService.deleteReview(request.getReviewId(), request.getUserId(),
+                request.getPlaceId(), request.getAction());
         Review findReview = reviewService.findByReviewId(reviewId);
 
         //첨부 파일 삭제
         attachmentService.deleteAttachment(findReview);
-
-        return new ReviewDto(findReview.getReviewUUID(), findReview.getContent(), findReview.getReviewStatus());
+        ReviewDto reviewDto = new ReviewDto(findReview.getReviewUUID(), findReview.getContent(), findReview.getReviewStatus());
+        return new ResponseEntity<>(createDefaultRes(ResponseMessage.OK,
+                "SUCCESS", reviewDto), HttpStatus.OK);
     }
 
     // 리뷰 수정
-    public Long modifyReview(CreateReviewRequest request) {
-        Long reviewId = reviewService.changeReviewStatus(request.getReviewId(), request.getUserId(),
+    @PostMapping("/api/mod-review")
+    public ResponseEntity modifyReview(@RequestBody @Valid CreateReviewRequest request) {
+        Long reviewId = reviewService.modReview(request.getReviewId(), request.getUserId(),
                 request.getPlaceId(), request.getAction(), request.getContent());
         Review findReview = reviewService.findByReviewId(reviewId);
 
         // 첨부 파일 변경
-        attachmentService.changeAttachment(findReview, request.getAttachedPhotoIds());
-        // TODO dto로 만들어 주자
-        return null;
+        attachmentService.modAttachment(findReview, request.getAttachedPhotoIds());
+
+        ReviewDto reviewDto = new ReviewDto(findReview.getReviewUUID(), findReview.getContent(), findReview.getReviewStatus());
+        return new ResponseEntity<>(createDefaultRes(ResponseMessage.OK,
+                "SUCCESS", reviewDto), HttpStatus.OK);
     }
 
     @Data
@@ -90,6 +78,15 @@ public class ReviewApiController {
         private String reviewId;
         private String content;
         private String[] attachedPhotoIds;
+        private String userId;
+        private String placeId;
+    }
+
+    @Data
+    static class CreateDeleteReviewRequest {
+        private String type;
+        private ReviewStatus action;
+        private String reviewId;
         private String userId;
         private String placeId;
     }
