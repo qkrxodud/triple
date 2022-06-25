@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Review {
+public class Review extends BaseEntity {
 
     @Id  @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "seq")
@@ -31,12 +31,6 @@ public class Review {
     private ReviewStatus reviewStatus;
 
     private String content;
-
-    //TODO BaseEntitiy로 할지 고민..
-    @Column(name = "reg_date")
-    private LocalDateTime regDate;
-    @Column(name = "modify_date")
-    private LocalDateTime modifyDate;
 
     public static Review createReview(String reviewUUID, String userUUID,
                                       String placeUUID, String content, ReviewStatus reviewStatus) {
@@ -65,8 +59,8 @@ public class Review {
         this.placeUUID = placeUUID;
         this.content = content;
         this.reviewStatus = reviewStatus;
-        this.regDate = LocalDateTime.now();
-        this.modifyDate = LocalDateTime.now();
+        this.createDateTime(LocalDateTime.now());
+        this.changeModDate(LocalDateTime.now());
     }
 
     public void changeStatus(ReviewStatus reviewStatus) {
