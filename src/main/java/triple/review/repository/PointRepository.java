@@ -2,46 +2,38 @@ package triple.review.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import triple.review.entitiy.Point;
 import triple.review.entitiy.PointStatus;
+import triple.review.entitiy.TriplePoint;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface PointRepository  extends JpaRepository<Point, Integer> {
-    List<Optional<Point>> findPointByReview_ReviewIdAndPointStatus(Long reviewId, PointStatus pointStatus);
+public interface PointRepository  extends JpaRepository<TriplePoint, Integer> , PointRepositoryCustom{
+    List<Optional<TriplePoint>> findPointByReview_ReviewIdAndPointStatus(Long reviewId, PointStatus pointStatus);
 
     @Query(value =
-            "SELECT user_uuid, pls_point, min_point, pls_point - min_point AS total_point " +
-              "FROM (SELECT p.user_uuid, IFNULL(pls_p.point, 0) AS pls_point, IFNULL(min_p.point, 0) AS min_point " +
-                      "FROM point AS p " +
-                "LEFT OUTER JOIN (SELECT user_uuid, SUM(point) AS point " +
-                                   "FROM point " +
-                                  "WHERE point_status = 'Y' " +
-                                    "AND user_uuid = ?1 " +
-                                  "GROUP BY user_uuid) AS pls_p ON p.user_uuid = pls_p.user_uuid " +
-                "LEFT OUTER JOIN (SELECT user_uuid, SUM(point) AS point " +
-                                   "FROM point " +
-                                  "WHERE point_status = 'N' " +
-                                    "AND user_uuid = ?1 " +
-                                  "GROUP BY user_uuid) AS min_p ON p.user_uuid = min_p.user_uuid " +
-              " GROUP BY user_uuid) AS point " +
-              " WHERE user_uuid = ?1",
+            "SELECT t_point.user_uuid, IFNULL(temp_point.point, 0) AS point " +
+              "FROM (SELECT user_uuid " +
+                      "FROM triple_point " +
+                    " GROUP BY user_uuid) AS t_point " +
+              "LEFT OUTER JOIN (SELECT user_uuid, IFNULL(SUM(point), 0) AS point " +
+                                 "FROM triple_point " +
+                                "WHERE point_status = ?2 " +
+                                "GROUP BY user_uuid) AS temp_point ON temp_point.user_uuid = t_point.user_uuid " +
+              "WHERE t_point.user_uuid = ?1 " ,
+
             nativeQuery = true)
-    List<Object[]> userPointFindByUserUUID(String userUUId);
+    List<Object[]> userPointFindByUserUUID(String userUUId, String pointStatus);
 
     @Query(value =
-            "SELECT p.user_uuid, IFNULL(pls_p.point, 0) AS pls_point, IFNULL(min_p.point, 0) AS min_point " +
-              "FROM point AS p " +
-            "  LEFT OUTER JOIN (SELECT user_uuid, SUM(point) AS point " +
-                    "FROM point " +
-                    "WHERE point_status = 'Y' " +
-                    "GROUP BY user_uuid) AS pls_p ON p.user_uuid = pls_p.user_uuid " +
-            "  LEFT OUTER JOIN (SELECT user_uuid, SUM(point) AS point " +
-                    "FROM point " +
-                    "WHERE point_status = 'N' " +
-                    "GROUP BY user_uuid) AS min_p ON p.user_uuid = min_p.user_uuid " +
-                    " GROUP BY user_uuid ",
+            "SELECT t_point.user_uuid, IFNULL(temp_point.point, 0) AS point " +
+              "FROM (SELECT user_uuid " +
+                      "FROM triple_point " +
+                    " GROUP BY user_uuid) AS t_point " +
+              "LEFT OUTER JOIN (SELECT user_uuid, IFNULL(SUM(point), 0) AS point " +
+                                 "FROM triple_point " +
+                                "WHERE point_status = ?1 " +
+                                "GROUP BY user_uuid) AS temp_point ON temp_point.user_uuid = t_point.user_uuid ",
             nativeQuery = true)
-    List<Object[]> allPointFindByAll();
+    List<Object[]> allPointFindByAll(String pointStatus);
 }
