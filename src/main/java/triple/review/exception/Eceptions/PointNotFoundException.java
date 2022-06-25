@@ -1,4 +1,4 @@
-package triple.review.exception;
+package triple.review.exception.Eceptions;
 
 public class PointNotFoundException extends RuntimeException{
     public PointNotFoundException() {
