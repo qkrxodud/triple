@@ -7,7 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class PointDto {
     private String userUUID;
-    private int plsPoint;
-    private int minPoint;
-    private int totalPoint;
+    private int point;
 }
