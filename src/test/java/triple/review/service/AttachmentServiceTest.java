@@ -1,12 +1,13 @@
 package triple.review.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import triple.review.entitiy.Attachment;
 import triple.review.entitiy.Review;
+import triple.review.entitiy.ReviewStatus;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import static triple.review.entitiy.Review.createReview;
 
 @Slf4j
 @SpringBootTest
+@Transactional
 class AttachmentServiceTest {
 
     @Autowired
@@ -31,7 +33,8 @@ class AttachmentServiceTest {
     @Test
     public void 파일등록() {
         //given
-        Review review1 = createReview("reviewUUIDtest", "test", "test", "좋아요!");
+        Review review1 = createReview("reviewUUIDtest", "test", "test", "좋아요!", ReviewStatus.ADD);
+        Long saveReviewId = reviewService.save(review1);
         Attachment attachment1 = createAttachment("fileUUIDtest", review1);
 
         //when
@@ -42,9 +45,9 @@ class AttachmentServiceTest {
     }
 
     @Test
-    public void 파일등록포인트() throws Exception {
+    public void 파일등록포인트() {
         //given
-        Review review1 = createReview("reviewUUIDtest1", "test", "test", "좋아요!");
+        Review review1 = createReview("reviewUUIDtest1", "test", "test", "좋아요!", ReviewStatus.ADD);
         reviewService.save(review1);
 
         Attachment attachment1 = createAttachment("fileUUIDtest1", review1);
@@ -61,6 +64,57 @@ class AttachmentServiceTest {
         //then
         assertThat(Integer.parseInt(objects1[1].toString())).isEqualTo(3);
     }
+
+//    @Test
+//    public void 리뷰ID로파일찾기() throws Exception {
+//        //given
+//        Review review1 = createReview("reviewUUIDtest1", "test", "test", "좋아요!", ReviewStatus.ADD);
+//        reviewService.save(review1);
+//
+//        Attachment attachment1 = createAttachment("fileUUIDtest1", review1);
+//        Attachment attachment2 = createAttachment("fileUUIDtest2", review1);
+//        Attachment attachment3 = createAttachment("fileUUIDtest3", review1);
+//        attachmentService.save(attachment1);
+//        attachmentService.save(attachment2);
+//        attachmentService.save(attachment3);
+//
+//        //when
+//        List<Attachment> byReviewId = attachmentService.findByReviewId(review1.getReviewId());
+//
+//        //then
+//        assertThat(byReviewId.size()).isEqualTo(3);
+//    }
+
+    @Test
+    public void 파일변경하기() throws Exception {
+        //given
+        
+        //when
+
+        //then
+    }
+
+
+//    @Test
+//    public void 리뷰ID로파일삭제하기() {
+//        //given
+//        Review review1 = createReview("reviewUUIDtest1", "test", "test", "좋아요!", ReviewStatus.ADD);
+//        reviewService.save(review1);
+//
+//        Attachment attachment1 = createAttachment("fileUUIDtest1", review1);
+//        Attachment attachment2 = createAttachment("fileUUIDtest2", review1);
+//        Attachment attachment3 = createAttachment("fileUUIDtest3", review1);
+//        attachmentService.save(attachment1);
+//        attachmentService.save(attachment2);
+//        attachmentService.save(attachment3);
+//
+//        //when
+//        //attachmentService.deleteByReviewId(review1.getReviewId());
+//        List<Attachment> byReviewId = attachmentService.findByReviewId(review1.getReviewId());
+//
+//        //then
+//        assertThat(byReviewId.size()).isEqualTo(0);
+//    }
 
 
 

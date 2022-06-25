@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AttachmentRepository extends JpaRepository<Attachment, Integer> {
+
     boolean existsByReview_ReviewIdAndReview_userUUID(Long reviewId, String userUUID);
     boolean existsByReview_ReviewId(Long reviewId);
     Optional<List<Attachment>> findByReview_ReviewId(Long reviewId);
