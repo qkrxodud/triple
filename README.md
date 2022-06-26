@@ -1,6 +1,6 @@
-#트리플 사전과제 - 트리플여행자 클럽 마일리지 서비스
+# 트리플 사전과제 - 트리플여행자 클럽 마일리지 서비스
 
-##목차
+## 목차
 [1. 개발환경](#개발환경)
 
 [2. 빌드 및 실행하기](#빌드-및-실행하기)
@@ -10,7 +10,7 @@
 [4. 리뷰 작성 방법](#리뷰-작성-방법)
 
 -----------------------
-##개발환경
+## 개발환경
 * 기본환경
   * IDE: Intellij IDEA
   * OS: window10
@@ -23,8 +23,8 @@
   * Gradle
   * junit5
 ---
-##빌드 및 실행하기
-###터미널 환경
+## 빌드 및 실행하기
+### 터미널 환경
 * Git, JAVA는 설치되었다고 가정
 ```
 $ git clone https://github.com/qkrxodud/triple.git
@@ -47,9 +47,9 @@ $ java -jar build/libs/review-0.0.1-SNAPSHOT.jar
 면 사용자 B에게 보너스 점수를 부여하지 않습니다
 ---
 
-##리뷰 작성 방법
-###swagger 실행링크 : <http://localhost:8080/swagger-ui.html>
-####리뷰 저장 request
+## 리뷰 작성 방법
+### swagger 실행링크 : <http://localhost:8080/swagger-ui.html>
+#### 리뷰 저장 request
 1. /api/save-review 클릭
 2. Try it out 클릭
 3. Example value 작성
@@ -65,7 +65,7 @@ $ java -jar build/libs/review-0.0.1-SNAPSHOT.jar
   "placeId": "2e4baf1c-5acb-4efb-a1af-eddada31b00f"
 }
 ```
-####리뷰 저장 response
+#### 리뷰 저장 response
 ```json
 {
   "statusCode": 200,
@@ -79,7 +79,7 @@ $ java -jar build/libs/review-0.0.1-SNAPSHOT.jar
 ```
 ---
 
-####리뷰 수정 request
+#### 리뷰 수정 request
 1. /api/mod-review 클릭
 2. Try it out 클릭
 3. Example value 작성
@@ -95,7 +95,7 @@ $ java -jar build/libs/review-0.0.1-SNAPSHOT.jar
   "placeId": "2e4baf1c-5acb-4efb-a1af-eddada31b00f"
 }
 ```
-####리뷰 수정 response
+#### 리뷰 수정 response
 ```json
 {
   "statusCode": 200,
@@ -108,7 +108,7 @@ $ java -jar build/libs/review-0.0.1-SNAPSHOT.jar
 }
 ```
 ------
-####리뷰 삭제 request
+#### 리뷰 삭제 request
 1. /api/delete-review 클릭
 2. Try it out 클릭
 3. Example value 작성
@@ -122,7 +122,7 @@ $ java -jar build/libs/review-0.0.1-SNAPSHOT.jar
   "placeId": "2e4baf1c-5acb-4efb-a1af-eddada31b00f"
 }
 ```
-####리뷰 삭제 response
+#### 리뷰 삭제 response
 ```json
 {
   "statusCode": 200,
@@ -136,14 +136,14 @@ $ java -jar build/libs/review-0.0.1-SNAPSHOT.jar
 
 ```
 ---
-##포인트 조회방법
+## 포인트 조회방법
 
-####전체 포인트 조회 request
+#### 전체 포인트 조회 request
 1. /api/find-all-point 클릭
 2. Try it out 클릭
 3. Execute 클릭
 ---
-####유저 포인트 조회 request
+#### 유저 포인트 조회 request
 1. /api/find-user-point 클릭
 2. Try it out 클릭
 3. user-uuid 입력
