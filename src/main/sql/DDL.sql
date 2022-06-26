@@ -7,7 +7,7 @@ flush PRIVILEGES;
 ALTER user 'triple'@'localhost' IDENTIFIED WITH mysql_native_password by '1q2w3e4r!';
 -- 데이터베이스 생성
 CREATE DATABASE triple;
-
+ 
 
 -- 첨부파일 테이블 생성
 CREATE TABLE `attachment` (
