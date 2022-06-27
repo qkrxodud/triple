@@ -65,56 +65,66 @@ class AttachmentServiceTest {
         assertThat(Integer.parseInt(objects1[1].toString())).isEqualTo(3);
     }
 
-//    @Test
-//    public void 리뷰ID로파일찾기() throws Exception {
-//        //given
-//        Review review1 = createReview("reviewUUIDtest1", "test", "test", "좋아요!", ReviewStatus.ADD);
-//        reviewService.save(review1);
-//
-//        Attachment attachment1 = createAttachment("fileUUIDtest1", review1);
-//        Attachment attachment2 = createAttachment("fileUUIDtest2", review1);
-//        Attachment attachment3 = createAttachment("fileUUIDtest3", review1);
-//        attachmentService.save(attachment1);
-//        attachmentService.save(attachment2);
-//        attachmentService.save(attachment3);
-//
-//        //when
-//        List<Attachment> byReviewId = attachmentService.findByReviewId(review1.getReviewId());
-//
-//        //then
-//        assertThat(byReviewId.size()).isEqualTo(3);
-//    }
+    @Test
+    public void 리뷰ID로파일찾기() throws Exception {
+        //given
+        Review review1 = createReview("reviewUUIDtest1", "test", "test", "좋아요!", ReviewStatus.ADD);
+        reviewService.save(review1);
+
+        Attachment attachment1 = createAttachment("fileUUIDtest1", review1);
+        Attachment attachment2 = createAttachment("fileUUIDtest2", review1);
+        Attachment attachment3 = createAttachment("fileUUIDtest3", review1);
+        attachmentService.save(attachment1);
+        attachmentService.save(attachment2);
+        attachmentService.save(attachment3);
+
+        //when
+        List<Attachment> byReviewId = attachmentService.findByReviewId(review1.getReviewId());
+
+        //then
+        assertThat(byReviewId.size()).isEqualTo(3);
+    }
 
     @Test
     public void 파일변경하기() throws Exception {
         //given
-        
-        //when
+        Review review1 = createReview("reviewUUIDtest1", "test", "test", "좋아요!", ReviewStatus.ADD);
+        reviewService.save(review1);
 
+        Attachment attachment1 = createAttachment("fileUUIDtest1", review1);
+        attachmentService.save(attachment1);
+
+        //when
+        Review review = reviewService.findReview("reviewUUIDtest1", "test", "test");
+        String [] fileUUid = new String[0];
+        attachmentService.modAttachment(review, fileUUid);
+
+        List<Attachment> byReviewId = attachmentService.findByReviewId(review1.getReviewId());
         //then
+        assertThat(byReviewId.size()).isEqualTo(0);
     }
 
 
-//    @Test
-//    public void 리뷰ID로파일삭제하기() {
-//        //given
-//        Review review1 = createReview("reviewUUIDtest1", "test", "test", "좋아요!", ReviewStatus.ADD);
-//        reviewService.save(review1);
-//
-//        Attachment attachment1 = createAttachment("fileUUIDtest1", review1);
-//        Attachment attachment2 = createAttachment("fileUUIDtest2", review1);
-//        Attachment attachment3 = createAttachment("fileUUIDtest3", review1);
-//        attachmentService.save(attachment1);
-//        attachmentService.save(attachment2);
-//        attachmentService.save(attachment3);
-//
-//        //when
-//        //attachmentService.deleteByReviewId(review1.getReviewId());
-//        List<Attachment> byReviewId = attachmentService.findByReviewId(review1.getReviewId());
-//
-//        //then
-//        assertThat(byReviewId.size()).isEqualTo(0);
-//    }
+    @Test
+    public void 리뷰ID로파일삭제하기() {
+        //given
+        Review review1 = createReview("reviewUUIDtest1", "test", "test", "좋아요!", ReviewStatus.ADD);
+        reviewService.save(review1);
+
+        Attachment attachment1 = createAttachment("fileUUIDtest1", review1);
+        Attachment attachment2 = createAttachment("fileUUIDtest2", review1);
+        Attachment attachment3 = createAttachment("fileUUIDtest3", review1);
+        attachmentService.save(attachment1);
+        attachmentService.save(attachment2);
+        attachmentService.save(attachment3);
+
+        //when
+        attachmentService.deleteAttachment(review1);
+        List<Attachment> byReviewId = attachmentService.findByReviewId(review1.getReviewId());
+
+        //then
+        assertThat(byReviewId.size()).isEqualTo(0);
+    }
 
 
 
