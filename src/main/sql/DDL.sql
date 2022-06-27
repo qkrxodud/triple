@@ -7,16 +7,16 @@ flush PRIVILEGES;
 ALTER user 'triple'@'localhost' IDENTIFIED WITH mysql_native_password by '1q2w3e4r!';
 -- 데이터베이스 생성
 CREATE DATABASE triple;
- 
+
 
 -- 첨부파일 테이블 생성
-CREATE TABLE `attachment` (
+CREATE TABLE `attachment`  (
     `seq` INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `review_id` bigint DEFAULT NULL COMMENT '리뷰 ID',
     `file_uuid` varchar(255) DEFAULT NULL COMMENT '파일 UUID',
     INDEX `idx_1_attachment_1` (`seq`),
     INDEX `idx_2_attachment_2` (`seq`,`review_id`)
-)  ENGINE=INNODB;
+)  COMMENT = '첨부파일' ENGINE=INNODB;
 
 -- 리뷰 테이블 생성
 CREATE TABLE `review` (
@@ -32,7 +32,7 @@ CREATE TABLE `review` (
     INDEX `idx_2_review` (`seq`,`review_uuid`),
     INDEX `idx_3_review` (`seq`,`review_uuid`, `user_uuid`),
     INDEX `idx_4_review` (`seq`,`review_uuid`, `user_uuid`, `place_uuid`)
-) ENGINE=InnoDB;
+) COMMENT = '리뷰' ENGINE=InnoDB;
 
 -- 포인트 테이블 생성
 CREATE TABLE `triple_point` (
@@ -49,6 +49,6 @@ CREATE TABLE `triple_point` (
     INDEX `idx_2_triple_point` (`seq`,`user_uuid`),
     INDEX `idx_3_triple_point` (`seq`,`review_id`, `user_uuid`),
     INDEX `idx_4_triple_point` (`seq`,`review_id`, `user_uuid`, `point_status`)
-)  ENGINE=INNODB;
+) COMMENT = '포인트' ENGINE=INNODB;
 
 
