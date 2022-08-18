@@ -203,5 +203,4 @@ CREATE TABLE `member_point` (
 2. Try it out 클릭
 3. user-uuid 입력
 4. Execute 클릭
-##swagger 기본 화면
-![img.png](src/main/resources/readme_imges/img.png)
+
