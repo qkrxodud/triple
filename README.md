@@ -1,4 +1,4 @@
-# 트리플 사전과제 - 트리플여행자 클럽 마일리지 서비스
+# 클럽 마일리지 서비스
 
 ## 목차
 [1. 개발환경](#개발환경)
@@ -38,14 +38,14 @@ sql > DDL.sql 파일 참조
 ```mysql
 -- 계정 생성
 -- 계정 생성
-CREATE USER 'triple'@'localhost' identified BY '1q2w3e4r!';
+CREATE USER 'typark'@'localhost' identified BY '1q2w3e4r!';
 -- 권한 설정
-GRANT ALL PRIVILEGES ON *.* TO 'triple'@'localhost';
+GRANT ALL PRIVILEGES ON *.* TO 'typark'@'localhost';
 flush PRIVILEGES;
 -- 비밀번호 형식 변경
-ALTER user 'triple'@'localhost' IDENTIFIED WITH mysql_native_password by '1q2w3e4r!';
+ALTER user 'typark'@'localhost' IDENTIFIED WITH mysql_native_password by '1q2w3e4r!';
 -- 데이터베이스 생성
-CREATE DATABASE triple;
+CREATE DATABASE membership;
 
 
 -- 첨부파일 테이블 생성
@@ -68,13 +68,11 @@ CREATE TABLE `review` (
   `reg_date` datetime(6) DEFAULT NULL COMMENT '등록날짜',
   `mod_date` datetime(6) DEFAULT NULL COMMENT '수정날짜',
   INDEX `idx_1_review` (`seq`),
-  INDEX `idx_2_review` (`seq`,`review_uuid`),
-  INDEX `idx_3_review` (`seq`,`review_uuid`, `user_uuid`),
-  INDEX `idx_4_review` (`seq`,`review_uuid`, `user_uuid`, `place_uuid`)
+  INDEX `idx_2_review` (`seq`,`review_uuid`)
 ) COMMENT = '리뷰' ENGINE=InnoDB;
 
 -- 포인트 테이블 생성
-CREATE TABLE `triple_point` (
+CREATE TABLE `member_point` (
   `seq` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `review_id` bigint DEFAULT NULL COMMENT '리뷰 ID',
   `user_uuid` varchar(255) DEFAULT NULL COMMENT '유저 UUID',
@@ -85,9 +83,7 @@ CREATE TABLE `triple_point` (
   `reg_date` datetime(6) DEFAULT NULL COMMENT '등록날짜',
   `mod_date` datetime(6) DEFAULT NULL COMMENT '수정날짜',
   INDEX `idx_1_triple_point` (`seq`),
-  INDEX `idx_2_triple_point` (`seq`,`user_uuid`),
-  INDEX `idx_3_triple_point` (`seq`,`review_id`, `user_uuid`),
-  INDEX `idx_4_triple_point` (`seq`,`review_id`, `user_uuid`, `point_status`)
+  INDEX `idx_2_triple_point` (`seq`,`user_uuid`)
 ) COMMENT = '포인트' ENGINE=INNODB;
 
 ```
@@ -207,5 +203,4 @@ CREATE TABLE `triple_point` (
 2. Try it out 클릭
 3. user-uuid 입력
 4. Execute 클릭
-##swagger 기본 화면
-![img.png](src/main/resources/readme_imges/img.png)
+
