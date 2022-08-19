@@ -26,14 +26,6 @@ public class AttachmentService {
     private final AttachmentRepository attachmentRepository;
     private final PointRepository pointRepository;
 
-    // 파일들 등록
-    @Transactional
-    public void saves(Review review, String [] fileUUIDs) {
-        for (String fileUUID : fileUUIDs) {
-            Attachment attachment = createAttachment(fileUUID, review);
-            save(attachment);
-        }
-    }
 
     // 파일 등록
     @Transactional

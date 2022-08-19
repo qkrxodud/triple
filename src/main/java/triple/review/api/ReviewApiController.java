@@ -31,13 +31,11 @@ public class ReviewApiController {
     public ResponseEntity saveReview(@RequestBody @Valid CreateReviewRequest request) {
         Review review = createReview(request.getReviewId(), request.getUserId(), request.getPlaceId(),
                 request.getContent(), ReviewStatus.ADD);
-        Long saveReviewId = reviewService.save(review);
-        Review findReview = reviewService.findByReviewId(saveReviewId);
 
-        // 첨부파일 등록
-        attachmentService.saves(findReview, request.getAttachedPhotoIds());
+        //등록
+        Review saveReview = reviewService.save(review, request.getAttachedPhotoIds());
+        ReviewDto reviewDto = new ReviewDto(saveReview.getReviewUUID(), saveReview.getContent(), saveReview.getReviewStatus());
 
-        ReviewDto reviewDto = new ReviewDto(findReview.getReviewUUID(), findReview.getContent(), findReview.getReviewStatus());
         return new ResponseEntity<>(createDefaultRes(ResponseMessage.OK,
                 "SUCCESS", reviewDto), HttpStatus.OK);
     }
@@ -45,13 +43,10 @@ public class ReviewApiController {
     // 리뷰 삭제
     @PostMapping("/api/delete-review")
     public ResponseEntity deleteReview(@RequestBody @Valid CreateDeleteReviewRequest request) {
-        Long reviewId = reviewService.deleteReview(request.getReviewId(), request.getUserId(),
-                request.getPlaceId(), request.getAction());
-        Review findReview = reviewService.findByReviewId(reviewId);
+        // 삭제
+        Review deleteReview = reviewService.deleteReview(request.getReviewId(), request.getUserId(), request.getPlaceId(), request.getAction());
+        ReviewDto reviewDto = new ReviewDto(deleteReview.getReviewUUID(), deleteReview.getContent(), deleteReview.getReviewStatus());
 
-        //첨부 파일 삭제
-        attachmentService.deleteAttachment(findReview);
-        ReviewDto reviewDto = new ReviewDto(findReview.getReviewUUID(), findReview.getContent(), findReview.getReviewStatus());
         return new ResponseEntity<>(createDefaultRes(ResponseMessage.OK,
                 "SUCCESS", reviewDto), HttpStatus.OK);
     }

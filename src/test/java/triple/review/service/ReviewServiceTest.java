@@ -33,15 +33,15 @@ class ReviewServiceTest {
         Review review4 = createReview("test3", "test3", "test3", "좋아요!", ADD);
 
         //when
-        Long saveReviewId1 = reviewService.save(review1);
-        Long saveReviewId2 = reviewService.save(review2);
-        Long saveReviewId3 = reviewService.save(review3);
-        Long saveReviewId4 = reviewService.save(review4);
+        Review saveReviewId1 = reviewService.save(review1,"");
+        Review saveReviewId2 = reviewService.save(review2,"");
+        Review saveReviewId3 = reviewService.save(review3,"");
+        Review saveReviewId4 = reviewService.save(review4,"");
 
-        Review findReview1 = reviewService.findByReviewId(saveReviewId1);
-        Review findReview2 = reviewService.findByReviewId(saveReviewId2);
-        Review findReview3 = reviewService.findByReviewId(saveReviewId3);
-        Review findReview4 = reviewService.findByReviewId(saveReviewId4);
+        Review findReview1 = reviewService.findByReviewId(saveReviewId1.getReviewId());
+        Review findReview2 = reviewService.findByReviewId(saveReviewId2.getReviewId());
+        Review findReview3 = reviewService.findByReviewId(saveReviewId3.getReviewId());
+        Review findReview4 = reviewService.findByReviewId(saveReviewId4.getReviewId());
 
         //then
         assertThat(findReview1.getReviewUUID()).isEqualTo("test");
@@ -114,11 +114,10 @@ class ReviewServiceTest {
         reviewService.save(createReview);
 
         //when
-        Long reviewId = reviewService.deleteReview("reviewUUIDtest12", "test2", "test2", DELETE);
-        Review findReview = reviewService.findByReviewId(reviewId);
+        Review deleteReview = reviewService.deleteReview("reviewUUIDtest12", "test2", "test2", DELETE);
 
         //then
-        assertThat(findReview.getReviewStatus()).isEqualTo(DELETE);
+        assertThat(deleteReview.getReviewStatus()).isEqualTo(DELETE);
     }
 
     @Test
@@ -132,8 +131,7 @@ class ReviewServiceTest {
 
 
         //when
-        Long reviewId = reviewService.deleteReview("reviewUUIDtest12", "test2", "test2", DELETE);
-        Review findReview = reviewService.findByReviewId(reviewId);
+        Review review = reviewService.deleteReview("reviewUUIDtest12", "test2", "test2", DELETE);
 
         List<Object[]> userPoint2 = pointService.findUserPoint("test2");
 

@@ -34,8 +34,8 @@ class AttachmentServiceTest {
     public void 파일등록() {
         //given
         Review review1 = createReview("reviewUUIDtest", "test", "test", "좋아요!", ReviewStatus.ADD);
-        Long saveReviewId = reviewService.save(review1);
-        Attachment attachment1 = createAttachment("fileUUIDtest", review1);
+        Review saveReview = reviewService.save(review1, "");
+        Attachment attachment1 = createAttachment("fileUUIDtest", saveReview);
 
         //when
         Attachment saveAttachment = attachmentService.save(attachment1);
@@ -69,7 +69,7 @@ class AttachmentServiceTest {
     public void 리뷰ID로파일찾기() throws Exception {
         //given
         Review review1 = createReview("reviewUUIDtest1", "test", "test", "좋아요!", ReviewStatus.ADD);
-        reviewService.save(review1);
+        reviewService.save(review1, "");
 
         Attachment attachment1 = createAttachment("fileUUIDtest1", review1);
         Attachment attachment2 = createAttachment("fileUUIDtest2", review1);

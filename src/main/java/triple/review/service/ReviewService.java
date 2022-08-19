@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import triple.review.entitiy.*;
 import triple.review.exception.Eceptions.PointNotFoundException;
 import triple.review.exception.Eceptions.ReviewNotFoundException;
+import triple.review.repository.AttachmentRepository;
 import triple.review.repository.PointRepository;
 import triple.review.repository.ReviewRepository;
 
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static triple.review.entitiy.Attachment.createAttachment;
 import static triple.review.entitiy.TriplePoint.*;
 import static triple.review.entitiy.ReviewStatus.*;
 
@@ -34,10 +36,11 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final PointRepository pointRepository;
+    private final AttachmentRepository attachmentRepository;
 
     // 리뷰 등록
     @Transactional
-    public Long save(Review review) {
+    public Review save(Review review, String... fileUUIDs) {
         String placeUUID = review.getPlaceUUID();
         String userUUID = review.getUserUUID();
         String content = review.getContent();
@@ -62,12 +65,41 @@ public class ReviewService {
         pointRepository.save(createPoint(review, userUUID, PointStatus.ADD, 1, "reg_review"));
 
         // 리뷰 등록
-        return reviewRepository.save(review).getReviewId();
+        reviewRepository.save(review).getReviewId();
+
+        // 첨부파일 등록
+        savesAttachment(review, fileUUIDs);
+
+        return review;
     }
+
+    // 파일들 등록
+    @Transactional
+    public void savesAttachment(Review review, String [] fileUUIDs) {
+        for (String fileUUID : fileUUIDs) {
+            Attachment attachment = createAttachment(fileUUID, review);
+            saveAttachmentSave(attachment);
+        }
+    }
+
+    // 파일 등록
+    @Transactional
+    public Attachment saveAttachmentSave(Attachment attachment) {
+        Review review = attachment.getReview();
+
+        // 사진 업로드 보너스 1점
+        boolean exists = attachmentRepository.existsByReview_ReviewIdAndReview_userUUID(review.getReviewId(), review.getUserUUID());
+        if (!exists) {
+            pointRepository.save(createPoint(review, review.getUserUUID(), PointStatus.ADD, 1, "reg_img"));
+        }
+
+        return attachmentRepository.save(attachment);
+    }
+
 
     // 리뷰삭제
     @Transactional
-    public Long deleteReview(String reviewUUID, String userUUID, String placeUUID, ReviewStatus reviewStatus) {
+    public Review deleteReview(String reviewUUID, String userUUID, String placeUUID, ReviewStatus reviewStatus) {
         Review findReview = reviewRepository.findReview(reviewUUID, userUUID, placeUUID).
                 orElseThrow(() -> new IllegalArgumentException("삭제 할 데이타가 없습니다."));
 
@@ -75,7 +107,16 @@ public class ReviewService {
         findReview.changeModDate(LocalDateTime.now());
         deletePoint(findReview.getReviewId());
 
-        return findReview.getReviewId();
+        // 첨부파일 삭제
+        deleteAttachment(findReview);
+
+        return findReview;
+    }
+
+    // 파일 삭제
+    @Transactional
+    public void deleteAttachment(Review review) {
+        attachmentRepository.deleteByReview_ReviewId(review.getReviewId());
     }
 
     // 리뷰수정
